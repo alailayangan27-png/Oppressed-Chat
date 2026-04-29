@@ -6,7 +6,7 @@
 body {
   margin: 0;
   font-family: Inter, system-ui;
-  background: radial-gradient(circle at top, #1a0b2e, #05010a);
+  background: radial-gradient(circle at top, #140a2a, #04010a);
   color: #e9d5ff;
 }
 
@@ -14,18 +14,20 @@ body {
   position: sticky;
   top: 0;
   backdrop-filter: blur(20px);
-  background: rgba(10,5,20,0.5);
+  background: rgba(10,5,20,0.6);
   padding: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .logo-wrap {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 
 .logo-text {
-  font-weight: bold;
+  font-weight: 700;
   background: linear-gradient(90deg,#a855f7,#38bdf8);
   -webkit-background-clip: text;
   color: transparent;
@@ -67,19 +69,18 @@ body {
   50% { transform: translateY(-3px); }
 }
 
-/* Layout */
 .container {
   max-width: 640px;
   margin: auto;
   padding: 16px;
 }
 
-/* Composer */
 .composer {
   background: rgba(30,10,60,0.5);
   border-radius: 18px;
   padding: 14px;
   margin-bottom: 20px;
+  border: 1px solid rgba(168,85,247,0.2);
 }
 
 textarea {
@@ -89,16 +90,17 @@ textarea {
   color: white;
   resize: none;
   min-height: 80px;
-  transition: 0.2s;
+  font-size: 14px;
 }
 
 textarea:focus {
-  transform: scale(1.02);
+  outline: none;
 }
 
 .composer-bottom {
   display: flex;
   justify-content: space-between;
+  margin-top: 10px;
 }
 
 button {
@@ -114,19 +116,29 @@ button:active {
   transform: scale(0.95);
 }
 
-/* Feed */
 .feed {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-/* Post */
 .post {
-  background: rgba(20,5,40,0.6);
+  background: rgba(20,5,40,0.7);
   padding: 14px;
   border-radius: 18px;
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition: 0.2s;
+  border: 1px solid rgba(168,85,247,0.15);
+}
+
+.post:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(168,85,247,0.2);
+}
+
+.author {
+  font-size: 12px;
+  color: #a78bfa;
+  margin-bottom: 4px;
 }
 
 .time {
@@ -135,7 +147,8 @@ button:active {
 }
 
 .content {
-  margin-top: 5px;
+  margin-top: 6px;
+  white-space: pre-wrap;
 }
 
 .reaction {
@@ -143,9 +156,11 @@ button:active {
   background: #1e1b4b;
   padding: 6px 10px;
   border-radius: 10px;
+  font-size: 13px;
 }
 
 .trending {
   color: #facc15;
   font-size: 11px;
+  margin-bottom: 4px;
 }
