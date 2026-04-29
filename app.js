@@ -34,11 +34,7 @@ window.send = async function () {
   const text = document.getElementById("text").value;
 
   if (!text.trim()) return;
-
-  if (count() >= 3) {
-    alert("Limit reached");
-    return;
-  }
+  if (count() >= 3) return alert("Limit reached");
 
   await addDoc(collection(db, "posts"), {
     content: text,
@@ -51,19 +47,27 @@ window.send = async function () {
   document.getElementById("text").value = "";
 };
 
-window.react = async function (id, current) {
+window.react = async function (id, current, btn) {
+  spring(btn);
   await updateDoc(doc(db, "posts", id), {
     reactions: current + 1
   });
 };
 
+function spring(el) {
+  el.animate([
+    { transform: "scale(0.9)" },
+    { transform: "scale(1.05)" },
+    { transform: "scale(1)" }
+  ], {
+    duration: 300,
+    easing: "cubic-bezier(0.34,1.56,0.64,1)"
+  });
+}
+
 const feed = document.getElementById("feed");
 
-const q = query(
-  collection(db, "posts"),
-  orderBy("createdAt", "desc"),
-  limit(50)
-);
+const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(50));
 
 onSnapshot(q, (snap) => {
   const posts = [];
@@ -84,6 +88,29 @@ onSnapshot(q, (snap) => {
     const el = document.createElement("div");
     el.className = "post";
 
+    el.style.opacity = "0";
+    el.style.transform = "translateY(20px)";
+
+    setTimeout(() => {
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    }, 50);
+
+    let startX = 0;
+
+    el.addEventListener("touchstart", e => {
+      startX = e.touches[0].clientX;
+    });
+
+    el.addEventListener("touchmove", e => {
+      let moveX = e.touches[0].clientX - startX;
+      el.style.transform = `translateX(${moveX}px)`;
+    });
+
+    el.addEventListener("touchend", () => {
+      el.style.transform = "translateX(0)";
+    });
+
     if (d.score > 1) {
       const badge = document.createElement("div");
       badge.className = "trending";
@@ -102,7 +129,7 @@ onSnapshot(q, (snap) => {
     const btn = document.createElement("button");
     btn.className = "reaction";
     btn.innerText = "I feel this (" + (d.reactions || 0) + ")";
-    btn.onclick = () => react(d.id, d.reactions || 0);
+    btn.onclick = () => react(d.id, d.reactions || 0, btn);
 
     el.appendChild(time);
     el.appendChild(content);
