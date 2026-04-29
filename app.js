@@ -13,28 +13,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let lastPostTime = 0;
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function getPostCount() {
+  return parseInt(localStorage.getItem(getTodayKey())) || 0;
+}
+
+function increasePost() {
+  const key = getTodayKey();
+  const count = getPostCount() + 1;
+  localStorage.setItem(key, count);
+}
 
 window.send = async function () {
   const text = document.getElementById("text").value;
-  const now = Date.now();
 
   if (!text.trim()) return;
-  if (now - lastPostTime < 5000) return;
 
-  lastPostTime = now;
+  if (getPostCount() >= 3) {
+    alert("Daily limit reached");
+    return;
+  }
 
   await addDoc(collection(db, "posts"), {
     content: text,
-    createdAt: now
+    createdAt: Date.now()
   });
 
+  increasePost();
   document.getElementById("text").value = "";
 };
 
 function formatTime(ts) {
-  const date = new Date(ts);
-  return date.toLocaleString();
+  return new Date(ts).toLocaleString();
 }
 
 const feed = document.getElementById("feed");
@@ -52,7 +66,7 @@ onSnapshot(q, (snapshot) => {
     const data = doc.data();
 
     const div = document.createElement("div");
-    div.className = "post";
+    div.className = "card post";
 
     const time = document.createElement("div");
     time.className = "time";
