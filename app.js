@@ -35,9 +35,14 @@ function deviceId() {
   return id;
 }
 
+async function translateText(text) {
+  const res = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=auto|" + navigator.language.slice(0,2));
+  const data = await res.json();
+  return data.responseData.translatedText;
+}
+
 window.send = async function () {
   const text = document.getElementById("text").value;
-
   if (!text.trim()) return;
   if (count() >= 10) return alert("Limit reached");
 
@@ -56,7 +61,6 @@ window.react = async function (id, btn) {
   const ref = doc(db, "posts", id);
   const snap = await getDoc(ref);
   const data = snap.data();
-
   const user = deviceId();
 
   if (data.reactedBy && data.reactedBy.includes(user)) return;
@@ -82,11 +86,7 @@ window.react = async function (id, btn) {
 
 const feed = document.getElementById("feed");
 
-const q = query(
-  collection(db, "posts"),
-  orderBy("createdAt", "desc"),
-  limit(50)
-);
+const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(50));
 
 onSnapshot(q, (snap) => {
   const posts = [];
@@ -95,7 +95,6 @@ onSnapshot(q, (snap) => {
     const d = docSnap.data();
     const age = (Date.now() - d.createdAt) / 3600000;
     const score = (d.reactions || 0) / (age + 2);
-
     posts.push({ id: docSnap.id, ...d, score });
   });
 
@@ -131,10 +130,36 @@ onSnapshot(q, (snap) => {
     btn.innerText = "❤️ " + (d.reactions || 0);
     btn.onclick = () => react(d.id, btn);
 
+    const translateBtn = document.createElement("button");
+    translateBtn.className = "translate";
+    translateBtn.innerText = "🌐 Translate";
+
+    const translated = document.createElement("div");
+    translated.className = "translated";
+    translated.style.display = "none";
+
+    translateBtn.onclick = async () => {
+      if (translated.innerText) {
+        translated.style.display = translated.style.display === "none" ? "block" : "none";
+        return;
+      }
+
+      translateBtn.innerText = "Translating...";
+
+      const result = await translateText(d.content);
+
+      translated.innerText = result;
+      translated.style.display = "block";
+
+      translateBtn.innerText = "🌐 Translated";
+    };
+
     el.appendChild(author);
     el.appendChild(time);
     el.appendChild(content);
     el.appendChild(btn);
+    el.appendChild(translateBtn);
+    el.appendChild(translated);
 
     feed.appendChild(el);
   });
