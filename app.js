@@ -36,9 +36,13 @@ function deviceId() {
 }
 
 async function translateText(text) {
-  const res = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=auto|" + navigator.language.slice(0,2));
-  const data = await res.json();
-  return data.responseData.translatedText;
+  try {
+    const res = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=auto|" + navigator.language.slice(0,2));
+    const data = await res.json();
+    return data.responseData.translatedText || "Translation failed";
+  } catch {
+    return "Translation unavailable";
+  }
 }
 
 window.send = async function () {
@@ -85,33 +89,40 @@ window.react = async function (id, btn) {
 };
 
 const feed = document.getElementById("feed");
+const trendingBox = document.getElementById("trending");
 
 const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(50));
 
 onSnapshot(q, (snap) => {
   const posts = [];
+  const trends = [];
 
   snap.forEach(docSnap => {
     const d = docSnap.data();
     const age = (Date.now() - d.createdAt) / 3600000;
     const score = (d.reactions || 0) / (age + 2);
-    posts.push({ id: docSnap.id, ...d, score });
+    const item = { id: docSnap.id, ...d, score };
+
+    posts.push(item);
+    trends.push(item);
   });
 
-  posts.sort((a, b) => b.score - a.score);
+  posts.sort((a, b) => b.createdAt - a.createdAt);
+  trends.sort((a, b) => b.score - a.score);
 
   feed.innerHTML = "";
+  trendingBox.innerHTML = "";
+
+  trends.slice(0, 10).forEach(d => {
+    const card = document.createElement("div");
+    card.className = "trending-card";
+    card.innerText = d.content.slice(0, 100);
+    trendingBox.appendChild(card);
+  });
 
   posts.forEach(d => {
     const el = document.createElement("div");
     el.className = "post";
-
-    if (d.score > 1) {
-      const badge = document.createElement("div");
-      badge.className = "trending";
-      badge.innerText = "🔥 TRENDING";
-      el.appendChild(badge);
-    }
 
     const author = document.createElement("div");
     author.className = "author";
@@ -145,12 +156,9 @@ onSnapshot(q, (snap) => {
       }
 
       translateBtn.innerText = "Translating...";
-
       const result = await translateText(d.content);
-
       translated.innerText = result;
       translated.style.display = "block";
-
       translateBtn.innerText = "🌐 Translated";
     };
 
