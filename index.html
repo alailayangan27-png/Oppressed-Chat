@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Freedom</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freedom</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="header">
-  <div class="logo">Freedom</div>
+  <div class="brand">Freedom</div>
 </header>
 
-<main class="main">
-  <div id="feed" class="feed"></div>
-</main>
+<main class="container">
 
-<button class="fab" onclick="openModal()">+</button>
-
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <textarea id="text" placeholder="Say anything..."></textarea>
-    <button onclick="send()">Post</button>
-    <button class="close" onclick="closeModal()">Cancel</button>
+  <div class="composer">
+    <textarea id="text" placeholder="Say something..."></textarea>
+    <div class="row">
+      <span id="limit">0/3</span>
+      <button onclick="send()">Post</button>
+    </div>
   </div>
-</div>
+
+  <button class="random" onclick="randomPost()">🎲 Send to Random</button>
+
+  <div id="feed" class="feed"></div>
+
+</main>
 
 <script type="module" src="app.js"></script>
 </body>
