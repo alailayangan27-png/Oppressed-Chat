@@ -2,12 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "REPLACE_API_KEY",
-  authDomain: "REPLACE_AUTH_DOMAIN",
-  projectId: "REPLACE_PROJECT_ID",
-  storageBucket: "REPLACE_STORAGE_BUCKET",
-  messagingSenderId: "REPLACE_SENDER_ID",
-  appId: "REPLACE_APP_ID"
+  apiKey: "AIzaSyBX77uMe5MQdzvOEcymqyZzl9FjU__3lP0",
+  authDomain: "oppressed-chat.firebaseapp.com",
+  projectId: "oppressed-chat",
+  storageBucket: "oppressed-chat.firebasestorage.app",
+  messagingSenderId: "597084815974",
+  appId: "1:597084815974:web:ffa9464d6df444455fe3a7"
 };
 
 const app = initializeApp(firebaseConfig);
