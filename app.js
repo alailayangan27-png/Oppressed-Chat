@@ -18,22 +18,28 @@ function getTodayKey() {
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 }
 
-function getPostCount() {
+function getCount() {
   return parseInt(localStorage.getItem(getTodayKey())) || 0;
 }
 
-function increasePost() {
-  const key = getTodayKey();
-  const count = getPostCount() + 1;
-  localStorage.setItem(key, count);
+function increase() {
+  localStorage.setItem(getTodayKey(), getCount() + 1);
 }
+
+window.openModal = function () {
+  document.getElementById("modal").classList.add("show");
+};
+
+window.closeModal = function () {
+  document.getElementById("modal").classList.remove("show");
+};
 
 window.send = async function () {
   const text = document.getElementById("text").value;
 
   if (!text.trim()) return;
 
-  if (getPostCount() >= 3) {
+  if (getCount() >= 3) {
     alert("Daily limit reached");
     return;
   }
@@ -43,8 +49,9 @@ window.send = async function () {
     createdAt: Date.now()
   });
 
-  increasePost();
+  increase();
   document.getElementById("text").value = "";
+  closeModal();
 };
 
 function formatTime(ts) {
@@ -65,19 +72,20 @@ onSnapshot(q, (snapshot) => {
   snapshot.forEach(doc => {
     const data = doc.data();
 
-    const div = document.createElement("div");
-    div.className = "card post";
+    const post = document.createElement("div");
+    post.className = "post";
 
     const time = document.createElement("div");
     time.className = "time";
     time.innerText = formatTime(data.createdAt);
 
     const content = document.createElement("div");
+    content.className = "content";
     content.innerText = data.content;
 
-    div.appendChild(time);
-    div.appendChild(content);
+    post.appendChild(time);
+    post.appendChild(content);
 
-    feed.appendChild(div);
+    feed.appendChild(post);
   });
 });
