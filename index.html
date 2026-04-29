@@ -3,22 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Freedom Space</title>
+  <title>Freedom</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="app">
-    <h1>Freedom Space</h1>
+<header class="header">
+  <div class="logo">Freedom</div>
+</header>
 
-    <div class="card input-card">
-      <textarea id="text" placeholder="Share your thoughts..."></textarea>
-      <button onclick="send()">Post</button>
-    </div>
+<main class="main">
+  <div id="feed" class="feed"></div>
+</main>
 
-    <div id="feed"></div>
+<button class="fab" onclick="openModal()">+</button>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <textarea id="text" placeholder="Say anything..."></textarea>
+    <button onclick="send()">Post</button>
+    <button class="close" onclick="closeModal()">Cancel</button>
   </div>
+</div>
 
-  <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
