@@ -1,87 +1,126 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Inter, system-ui;
-  background: #0a0f1c;
-  color: #e2e8f0;
+  background: radial-gradient(circle at top, #1a0b2e, #05010a);
+  color: #e9d5ff;
 }
 
+/* Header */
 .header {
   position: sticky;
   top: 0;
+  backdrop-filter: blur(10px);
+  background: rgba(10,5,20,0.6);
   padding: 14px;
   text-align: center;
-  background: rgba(10,15,28,0.8);
-  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
+.logo {
+  font-weight: 700;
+  background: linear-gradient(90deg,#a855f7,#38bdf8);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Layout */
 .container {
   max-width: 640px;
   margin: auto;
   padding: 16px;
 }
 
+/* Composer */
 .composer {
-  background: #111827;
-  border-radius: 16px;
+  background: rgba(30,10,60,0.5);
+  border: 1px solid rgba(168,85,247,0.2);
+  border-radius: 18px;
   padding: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(168,85,247,0.1);
 }
 
 textarea {
   width: 100%;
-  border: none;
   background: transparent;
+  border: none;
+  outline: none;
   color: white;
   resize: none;
   min-height: 80px;
 }
 
-.row {
+textarea::placeholder {
+  color: #a78bfa;
+}
+
+.composer-bottom {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 10px;
 }
 
 button {
-  background: linear-gradient(135deg,#3b82f6,#6366f1);
+  background: linear-gradient(135deg,#a855f7,#6366f1);
   border: none;
-  padding: 8px 14px;
-  border-radius: 10px;
-  color: white;
-}
-
-.random {
-  width: 100%;
-  margin-bottom: 15px;
-  padding: 10px;
+  padding: 8px 16px;
   border-radius: 12px;
-  background: linear-gradient(135deg,#f59e0b,#ef4444);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(168,85,247,0.4);
 }
 
+/* Feed */
 .feed {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
+/* Post */
 .post {
-  background: #111827;
+  background: rgba(20,5,40,0.6);
+  border: 1px solid rgba(168,85,247,0.2);
   padding: 14px;
-  border-radius: 16px;
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+  transition: 0.2s;
+}
+
+.post:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(168,85,247,0.2);
 }
 
 .time {
   font-size: 11px;
-  color: #64748b;
+  color: #c084fc;
+  margin-bottom: 6px;
 }
 
-.actions {
-  margin-top: 8px;
+.content {
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 
+/* Reaction */
 .reaction {
-  background: #1f2937;
+  margin-top: 10px;
+  background: #1e1b4b;
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 12px;
+}
+
+/* Trending badge */
+.trending {
+  font-size: 11px;
+  color: #facc15;
+  margin-bottom: 4px;
 }
