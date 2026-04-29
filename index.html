@@ -3,26 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Freedom</title>
+<title>Monad Space</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="header">
-  <div class="brand">Freedom</div>
+  <div class="logo">MONAD SPACE</div>
 </header>
 
 <main class="container">
 
   <div class="composer">
-    <textarea id="text" placeholder="Say something..."></textarea>
-    <div class="row">
+    <textarea id="text" placeholder="Broadcast your thoughts..."></textarea>
+
+    <div class="composer-bottom">
       <span id="limit">0/3</span>
       <button onclick="send()">Post</button>
     </div>
   </div>
-
-  <button class="random" onclick="randomPost()">🎲 Send to Random</button>
 
   <div id="feed" class="feed"></div>
 
