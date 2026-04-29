@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBX77uMe5MQdzvOEcymqyZzl9FjU__3lP0",
@@ -9,6 +9,7 @@ const firebaseConfig = {
   messagingSenderId: "597084815974",
   appId: "1:597084815974:web:ffa9464d6df444455fe3a7"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -25,14 +26,13 @@ window.send = async function () {
   });
 
   document.getElementById("text").value = "";
-  load();
 };
 
-async function load() {
-  const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
+const feed = document.getElementById("feed");
 
-  const feed = document.getElementById("feed");
+const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+
+onSnapshot(q, (snapshot) => {
   feed.innerHTML = "";
 
   snapshot.forEach(doc => {
@@ -44,6 +44,4 @@ async function load() {
 
     feed.appendChild(div);
   });
-}
-
-load();
+});
