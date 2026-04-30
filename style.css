@@ -107,9 +107,16 @@ button {
 
 #trending {
   display: flex;
-  flex-direction: column;
   gap: 12px;
-  margin-bottom: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+}
+
+#trending .post {
+  min-width: 260px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
 }
 
 .post {
