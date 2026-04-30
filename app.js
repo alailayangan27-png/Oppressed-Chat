@@ -35,13 +35,17 @@ function deviceId() {
   return id;
 }
 
+function truncateWords(text, limit = 50) {
+  const words = text.split(" ");
+  if (words.length <= limit) return text;
+  return words.slice(0, limit).join(" ") + "...";
+}
+
 async function translateText(text) {
   try {
     const res = await fetch("https://libretranslate.de/translate", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         q: text,
         source: "auto",
@@ -49,7 +53,6 @@ async function translateText(text) {
         format: "text"
       })
     });
-
     const data = await res.json();
     return data.translatedText || "Translation failed";
   } catch {
@@ -86,11 +89,7 @@ window.react = async function (id, btn) {
   btn.innerText = "❤️ " + (current + 1);
 
   btn.animate(
-    [
-      { transform: "scale(1)" },
-      { transform: "scale(1.3)" },
-      { transform: "scale(1)" }
-    ],
+    [{ transform: "scale(1)" }, { transform: "scale(1.3)" }, { transform: "scale(1)" }],
     { duration: 250 }
   );
 
@@ -100,7 +99,7 @@ window.react = async function (id, btn) {
   });
 };
 
-function createPostCard(d) {
+function createPostCard(d, isTrending = false) {
   const el = document.createElement("div");
   el.className = "post";
 
@@ -114,7 +113,7 @@ function createPostCard(d) {
 
   const content = document.createElement("div");
   content.className = "content";
-  content.innerText = d.content;
+  content.innerText = isTrending ? truncateWords(d.content) : d.content;
 
   const btn = document.createElement("button");
   btn.className = "reaction";
@@ -174,11 +173,11 @@ onSnapshot(q, (snap) => {
   feed.innerHTML = "";
   trendingBox.innerHTML = "";
 
-  trends.slice(0, 10).forEach(d => {
-    trendingBox.appendChild(createPostCard(d));
+  trends.slice(0, 5).forEach(d => {
+    trendingBox.appendChild(createPostCard(d, true));
   });
 
   posts.forEach(d => {
-    feed.appendChild(createPostCard(d));
+    feed.appendChild(createPostCard(d, false));
   });
 });
