@@ -37,9 +37,21 @@ function deviceId() {
 
 async function translateText(text) {
   try {
-    const res = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=auto|" + navigator.language.slice(0,2));
+    const res = await fetch("https://libretranslate.de/translate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        q: text,
+        source: "auto",
+        target: navigator.language.slice(0,2),
+        format: "text"
+      })
+    });
+
     const data = await res.json();
-    return data.responseData.translatedText || "Translation failed";
+    return data.translatedText || "Translation failed";
   } catch {
     return "Translation unavailable";
   }
@@ -79,7 +91,7 @@ window.react = async function (id, btn) {
       { transform: "scale(1.3)" },
       { transform: "scale(1)" }
     ],
-    { duration: 250, easing: "ease-out" }
+    { duration: 250 }
   );
 
   await updateDoc(ref, {
@@ -87,6 +99,58 @@ window.react = async function (id, btn) {
     reactedBy: [...(data.reactedBy || []), user]
   });
 };
+
+function createPostCard(d) {
+  const el = document.createElement("div");
+  el.className = "post";
+
+  const author = document.createElement("div");
+  author.className = "author";
+  author.innerText = "Anonymous";
+
+  const time = document.createElement("div");
+  time.className = "time";
+  time.innerText = new Date(d.createdAt).toLocaleString();
+
+  const content = document.createElement("div");
+  content.className = "content";
+  content.innerText = d.content;
+
+  const btn = document.createElement("button");
+  btn.className = "reaction";
+  btn.innerText = "❤️ " + (d.reactions || 0);
+  btn.onclick = () => react(d.id, btn);
+
+  const translateBtn = document.createElement("button");
+  translateBtn.className = "translate";
+  translateBtn.innerText = "🌐 Translate";
+
+  const translated = document.createElement("div");
+  translated.className = "translated";
+  translated.style.display = "none";
+
+  translateBtn.onclick = async () => {
+    if (translated.innerText) {
+      translated.style.display = translated.style.display === "none" ? "block" : "none";
+      return;
+    }
+
+    translateBtn.innerText = "Translating...";
+    const result = await translateText(d.content);
+    translated.innerText = result;
+    translated.style.display = "block";
+    translateBtn.innerText = "🌐 Translated";
+  };
+
+  el.appendChild(author);
+  el.appendChild(time);
+  el.appendChild(content);
+  el.appendChild(btn);
+  el.appendChild(translateBtn);
+  el.appendChild(translated);
+
+  return el;
+}
 
 const feed = document.getElementById("feed");
 const trendingBox = document.getElementById("trending");
@@ -99,76 +163,22 @@ onSnapshot(q, (snap) => {
 
   snap.forEach(docSnap => {
     const d = docSnap.data();
-    const age = (Date.now() - d.createdAt) / 3600000;
-    const score = (d.reactions || 0) / (age + 2);
-    const item = { id: docSnap.id, ...d, score };
-
+    const item = { id: docSnap.id, ...d };
     posts.push(item);
     trends.push(item);
   });
 
   posts.sort((a, b) => b.createdAt - a.createdAt);
-  trends.sort((a, b) => b.score - a.score);
+  trends.sort((a, b) => (b.reactions || 0) - (a.reactions || 0));
 
   feed.innerHTML = "";
   trendingBox.innerHTML = "";
 
   trends.slice(0, 10).forEach(d => {
-    const card = document.createElement("div");
-    card.className = "trending-card";
-    card.innerText = d.content.slice(0, 100);
-    trendingBox.appendChild(card);
+    trendingBox.appendChild(createPostCard(d));
   });
 
   posts.forEach(d => {
-    const el = document.createElement("div");
-    el.className = "post";
-
-    const author = document.createElement("div");
-    author.className = "author";
-    author.innerText = "Anonymous";
-
-    const time = document.createElement("div");
-    time.className = "time";
-    time.innerText = new Date(d.createdAt).toLocaleString();
-
-    const content = document.createElement("div");
-    content.className = "content";
-    content.innerText = d.content;
-
-    const btn = document.createElement("button");
-    btn.className = "reaction";
-    btn.innerText = "❤️ " + (d.reactions || 0);
-    btn.onclick = () => react(d.id, btn);
-
-    const translateBtn = document.createElement("button");
-    translateBtn.className = "translate";
-    translateBtn.innerText = "🌐 Translate";
-
-    const translated = document.createElement("div");
-    translated.className = "translated";
-    translated.style.display = "none";
-
-    translateBtn.onclick = async () => {
-      if (translated.innerText) {
-        translated.style.display = translated.style.display === "none" ? "block" : "none";
-        return;
-      }
-
-      translateBtn.innerText = "Translating...";
-      const result = await translateText(d.content);
-      translated.innerText = result;
-      translated.style.display = "block";
-      translateBtn.innerText = "🌐 Translated";
-    };
-
-    el.appendChild(author);
-    el.appendChild(time);
-    el.appendChild(content);
-    el.appendChild(btn);
-    el.appendChild(translateBtn);
-    el.appendChild(translated);
-
-    feed.appendChild(el);
+    feed.appendChild(createPostCard(d));
   });
 });
