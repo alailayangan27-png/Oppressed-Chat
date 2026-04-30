@@ -13,6 +13,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let userAddress = null;
+
+window.connectWallet = async function () {
+  if (!window.ethereum) {
+    alert("Install wallet");
+    return;
+  }
+
+  const accounts = await window.ethereum.request({
+    method: "eth_requestAccounts"
+  });
+
+  userAddress = accounts[0];
+
+  document.getElementById("walletAddress").innerText =
+    "Connected: " + userAddress;
+};
+
 function key() {
   const d = new Date();
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
@@ -69,7 +87,8 @@ window.send = async function () {
     content: text,
     createdAt: Date.now(),
     reactions: 0,
-    reactedBy: []
+    reactedBy: [],
+    wallet: userAddress || null
   });
 
   inc();
@@ -105,7 +124,7 @@ function createPostCard(d, isTrending = false) {
 
   const author = document.createElement("div");
   author.className = "author";
-  author.innerText = "Anonymous";
+  author.innerText = d.wallet ? d.wallet : "Anonymous";
 
   const time = document.createElement("div");
   time.className = "time";
