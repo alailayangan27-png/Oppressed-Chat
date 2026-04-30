@@ -178,6 +178,6 @@ onSnapshot(q, (snap) => {
   });
 
   posts.forEach(d => {
-    feed.appendChild(createPostCard(d, false));
+    feed.appendChild(createPostCard(d));
   });
 });
